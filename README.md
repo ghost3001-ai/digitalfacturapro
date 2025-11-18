@@ -1,2 +1,2 @@
 # digitalfacturapro
-Application de facturation
+Application de gestion de factures.
