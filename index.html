@@ -507,6 +507,9 @@
             z-index: 1000;
             transform: translateX(150%);
             transition: transform 0.4s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .notification.show {
@@ -519,6 +522,10 @@
         
         .notification.error {
             background: var(--danger);
+        }
+        
+        .notification.warning {
+            background: var(--warning);
         }
         
         .tabs {
@@ -543,65 +550,16 @@
         
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         .tab-content.active {
             display: block;
-        }
-        
-        @media (max-width: 768px) {
-            .desktop-nav {
-                display: none;
-            }
-            
-            .mobile-nav {
-                display: flex;
-            }
-            
-            .container {
-                padding-bottom: 80px;
-            }
-            
-            .invoice-details {
-                grid-template-columns: 1fr;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .tabs {
-                flex-direction: column;
-            }
-            
-            .tab {
-                border-bottom: none;
-                border-left: 3px solid transparent;
-            }
-            
-            .tab.active {
-                border-bottom: none;
-                border-left: 3px solid var(--primary);
-            }
-            
-            .invoice-table {
-                font-size: 0.8rem;
-            }
-            
-            .invoice-table th,
-            .invoice-table td {
-                padding: 8px 4px;
-            }
-            
-            .action-buttons .btn {
-                font-size: 0.9rem;
-                padding: 10px 15px;
-            }
         }
         
         .item-actions {
@@ -645,7 +603,9 @@
         }
         
         .badge {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
             padding: 4px 10px;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -708,6 +668,7 @@
         
         .page-section.active {
             display: block;
+            animation: fadeIn 0.5s ease;
         }
         
         .client-item, .invoice-full-item {
@@ -772,13 +733,22 @@
         
         .validation-error {
             color: var(--danger);
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             margin-top: 5px;
             display: none;
+            align-items: center;
+            gap: 5px;
         }
         
         .validation-error.show {
-            display: block;
+            display: flex;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
         
         .duplicate-btn {
@@ -789,16 +759,6 @@
             background: #e67e00;
         }
         
-        .page-section {
-            touch-action: pan-y;
-        }
-        
-        .pdf-logo {
-            max-width: 80px;
-            max-height: 80px;
-        }
-
-        /* Améliorations pour les champs de saisie des articles */
         .item-input {
             width: 100%;
             border: none;
@@ -824,7 +784,6 @@
             box-shadow: 0 0 0 2px rgba(46, 134, 171, 0.2);
         }
         
-        /* Amélioration de l'accessibilité */
         .sr-only {
             position: absolute;
             width: 1px;
@@ -837,7 +796,6 @@
             border: 0;
         }
         
-        /* Indicateur de chargement */
         .loading {
             display: inline-block;
             width: 20px;
@@ -852,13 +810,388 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Amélioration de la table des articles */
         .items-container {
             overflow-x: auto;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid var(--light-gray);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .btn:active::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+            animation: ripple 0.6s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 1; }
+            100% { transform: scale(20, 20); opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+            
+            .mobile-nav {
+                display: flex;
+            }
+            
+            .container {
+                padding-bottom: 80px;
+            }
+            
+            .invoice-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                border-bottom: none;
+                border-left: 3px solid transparent;
+            }
+            
+            .tab.active {
+                border-bottom: none;
+                border-left: 3px solid var(--primary);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .invoice-table {
+                font-size: 0.8rem;
+            }
+            
+            .invoice-table th,
+            .invoice-table td {
+                padding: 8px 4px;
+            }
+            
+            .action-buttons .btn {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+            }
+        }
+
+        .new-invoice-btn {
+            background: var(--success);
+        }
+        
+        .new-invoice-btn:hover {
+            background: #218838;
+        }
+        
+        /* Styles pour la gestion des statuts */
+        .status-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .status-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .status-btn.active {
+            border-color: currentColor;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .status-overdue {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-cancelled {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .status-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            transform: translateY(-2px);
+        }
+        
+        .filter-all {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .filter-all.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .filter-pending.active {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+        
+        .filter-paid.active {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .filter-overdue.active {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .filter-cancelled.active {
+            background: #e2e3e5;
+            border-color: #6c757d;
+            color: #383d41;
+        }
+        
+        .payment-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .payment-details h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .due-date-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .status-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .mark-paid-btn {
+            background: var(--success);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+        
+        .mark-overdue-btn {
+            background: var(--warning);
+            color: #212529;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+        
+        .mark-cancelled-btn {
+            background: var(--gray);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+        
+        .invoice-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .status-pending-bg {
+            background: linear-gradient(to right, #fff3cd, #ffeaa7);
+            border-left: 4px solid #ffc107;
+        }
+        
+        .status-paid-bg {
+            background: linear-gradient(to right, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+        }
+        
+        .status-overdue-bg {
+            background: linear-gradient(to right, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+        }
+        
+        .status-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .status-summary-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .status-summary-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .reminder-btn {
+            background: #17a2b8;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.85rem;
+        }
+        
+        .reminder-btn:hover {
+            background: #138496;
+        }
+        
+        .badge-secondary {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-partial {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
+    <!-- Overlay de chargement -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p style="margin-top: 20px; color: var(--primary); font-weight: 500;">Chargement...</p>
+    </div>
+
     <header>
         <div class="container">
             <div class="header-content">
@@ -923,6 +1256,18 @@
                     <div class="card">
                         <h2><i class="fas fa-plus-circle"></i> Créer une nouvelle facture</h2>
                         
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                            <button id="new-invoice-btn" class="btn new-invoice-btn">
+                                <i class="fas fa-plus"></i> Nouvelle Facture
+                            </button>
+                            <button id="preview-invoice" class="btn btn-outline">
+                                <i class="fas fa-eye"></i> Aperçu
+                            </button>
+                            <button id="duplicate-invoice" class="btn duplicate-btn" style="display: none;">
+                                <i class="fas fa-copy"></i> Dupliquer
+                            </button>
+                        </div>
+                        
                         <div class="tabs">
                             <div class="tab active" data-tab="company-info">Mon Entreprise</div>
                             <div class="tab" data-tab="client-info">Informations Client</div>
@@ -937,7 +1282,9 @@
                                     <i class="fas fa-building" aria-hidden="true"></i>
                                     <input type="text" id="company-name" aria-labelledby="company-name-label" aria-required="true" placeholder="Nom de votre entreprise ou votre nom">
                                 </div>
-                                <div class="validation-error" id="company-name-error">Le nom de l'entreprise est requis</div>
+                                <div class="validation-error" id="company-name-error">
+                                    <i class="fas fa-exclamation-circle"></i> Le nom de l'entreprise est requis
+                                </div>
                             </div>
                             
                             <div class="form-group">
@@ -1007,7 +1354,9 @@
                                     <i class="fas fa-user"></i>
                                     <input type="text" id="client-name" placeholder="Entrez le nom du client">
                                 </div>
-                                <div class="validation-error" id="client-name-error">Le nom du client est requis</div>
+                                <div class="validation-error" id="client-name-error">
+                                    <i class="fas fa-exclamation-circle"></i> Le nom du client est requis
+                                </div>
                             </div>
                             
                             <div class="form-group">
@@ -1066,15 +1415,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="items-table">
-                                        <tr>
-                                            <td><input type="text" class="item-desc" placeholder="Description de l'article"></td>
-                                            <td><input type="number" class="item-qty" value="1" min="1"></td>
-                                            <td><input type="number" class="item-price" placeholder="0" min="0" step="0.01"></td>
-                                            <td class="item-total">0 Fcfa</td>
-                                            <td class="item-actions">
-                                                <button class="remove-item" style="background: var(--danger); color: white;" title="Supprimer l'article">×</button>
-                                            </td>
-                                        </tr>
+                                        <!-- Les articles seront ajoutés ici dynamiquement -->
                                     </tbody>
                                 </table>
                             </div>
@@ -1082,10 +1423,55 @@
                             <button id="add-item" class="btn btn-outline" style="margin-top: 15px;">
                                 <i class="fas fa-plus"></i> Ajouter un article
                             </button>
-                            <div class="validation-error" id="items-error">Au moins un article valide est requis</div>
+                            <div class="validation-error" id="items-error">
+                                <i class="fas fa-exclamation-circle"></i> Au moins un article valide est requis
+                            </div>
                         </div>
                         
                         <div class="tab-content" id="invoice-options">
+                            <!-- Gestion des statuts - Ajoutée ici -->
+                            <div class="form-group">
+                                <label>Statut de la facture</label>
+                                <div class="status-selector">
+                                    <div class="status-btn status-pending active" data-status="pending">
+                                        <i class="fas fa-clock"></i> En attente
+                                    </div>
+                                    <div class="status-btn status-paid" data-status="paid">
+                                        <i class="fas fa-check-circle"></i> Payée
+                                    </div>
+                                    <div class="status-btn status-overdue" data-status="overdue">
+                                        <i class="fas fa-exclamation-triangle"></i> En retard
+                                    </div>
+                                    <div class="status-btn status-cancelled" data-status="cancelled">
+                                        <i class="fas fa-ban"></i> Annulée
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="payment-details-section" style="display: none;">
+                                <div class="payment-details">
+                                    <h4><i class="fas fa-money-bill-wave"></i> Détails du paiement</h4>
+                                    <div class="form-group">
+                                        <label>Date de paiement</label>
+                                        <input type="date" id="payment-date-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Référence du paiement</label>
+                                        <input type="text" id="payment-ref-input" placeholder="Référence (numéro de transaction, etc.)">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="due-date-section">
+                                <div class="form-group">
+                                    <label for="due-date">Date d'échéance</label>
+                                    <div class="input-with-icon">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <input type="date" id="due-date">
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <div class="form-group">
                                 <label for="tax-rate">Taux de TVA (%)</label>
                                 <div class="input-with-icon">
@@ -1129,11 +1515,8 @@
                             <button id="save-invoice" class="btn">
                                 <i class="fas fa-save"></i> Enregistrer la facture
                             </button>
-                            <button id="preview-invoice" class="btn btn-outline">
-                                <i class="fas fa-eye"></i> Aperçu
-                            </button>
-                            <button id="duplicate-invoice" class="btn duplicate-btn" style="display: none;">
-                                <i class="fas fa-copy"></i> Dupliquer
+                            <button id="clear-form" class="btn btn-outline">
+                                <i class="fas fa-times"></i> Annuler
                             </button>
                         </div>
                     </div>
@@ -1176,10 +1559,10 @@
                     <div class="card">
                         <h2><i class="fas fa-info-circle"></i> Comment utiliser</h2>
                         <ol style="padding-left: 20px; margin-top: 15px;">
+                            <li style="margin-bottom: 10px;">Cliquez sur "Nouvelle Facture" pour commencer</li>
                             <li style="margin-bottom: 10px;">Remplissez vos informations d'entreprise</li>
                             <li style="margin-bottom: 10px;">Ajoutez les informations du client</li>
                             <li style="margin-bottom: 10px;">Saisissez les articles ou services</li>
-                            <li style="margin-bottom: 10px;">Ajustez les options si nécessaire</li>
                             <li style="margin-bottom: 10px;">Enregistrez ou partagez la facture</li>
                         </ol>
                         <div style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 8px;">
@@ -1253,6 +1636,12 @@
 
             <div class="card">
                 <h2><i class="fas fa-chart-bar"></i> Statistiques Détaillées</h2>
+                
+                <!-- Statistiques des statuts -->
+                <div id="status-stats-section" class="status-summary">
+                    <!-- Les cartes de statuts seront ajoutées ici dynamiquement -->
+                </div>
+                
                 <div class="chart-container">
                     <h3>Revenus par Mois</h3>
                     <div class="chart-placeholder">
@@ -1296,17 +1685,17 @@
                 <div class="settings-option">
                     <div class="settings-info">
                         <h3>Informations de l'Entreprise</h3>
-                        <p>Gérez les informations de votre entreprise qui apparaissent sur les factures</p>
+                        <p>Modifiez vos informations d'entreprise dans la section "Nouvelle Facture"</p>
                     </div>
                     <button class="btn btn-outline" onclick="showPage('new-invoice'); document.querySelector('.tab[data-tab=\"company-info\"]').click()">
-                        <i class="fas fa-edit"></i> Modifier
+                        <i class="fas fa-arrow-right"></i> Aller à l'édition
                     </button>
                 </div>
                 
                 <div class="settings-option">
                     <div class="settings-info">
                         <h3>Export des Données</h3>
-                        <p>Téléchargez toutes vos données en format JSON pour sauvegarde</p>
+                        <p>Téléchargez toutes vos données en format JSON pour sauvegarde locale</p>
                     </div>
                     <button class="btn btn-outline" onclick="exportData()">
                         <i class="fas fa-download"></i> Exporter
@@ -1315,11 +1704,12 @@
                 
                 <div class="settings-option">
                     <div class="settings-info">
-                        <h3>Sauvegarde Cloud</h3>
-                        <p>Sauvegardez vos données dans le cloud (fonctionnalité avancée)</p>
+                        <h3>Import des Données</h3>
+                        <p>Importez des données à partir d'un fichier JSON précédemment exporté</p>
                     </div>
-                    <button class="btn btn-outline" onclick="backupToCloud()">
-                        <i class="fas fa-cloud-upload-alt"></i> Sauvegarder
+                    <input type="file" id="import-file" accept=".json" style="display: none;">
+                    <button class="btn btn-outline" onclick="document.getElementById('import-file').click()">
+                        <i class="fas fa-upload"></i> Importer
                     </button>
                 </div>
                 
@@ -1335,10 +1725,20 @@
                 
                 <div class="settings-option">
                     <div class="settings-info">
-                        <h3>A propos</h3>
-                        <p>Version 2.0 - Développé pour les entrepreneurs africains</p>
+                        <h3>Aide et Support</h3>
+                        <p>Consultez le guide d'utilisation et les astuces</p>
                     </div>
-                    <div style="color: var(--gray);">
+                    <button class="btn btn-outline" onclick="showHelp()">
+                        <i class="fas fa-question-circle"></i> Aide
+                    </button>
+                </div>
+                
+                <div class="settings-option">
+                    <div class="settings-info">
+                        <h3>A propos</h3>
+                        <p>FacturaPro v2.1 - Application de facturation pour entrepreneurs africains</p>
+                    </div>
+                    <div style="color: var(--primary);">
                         <i class="fas fa-info-circle"></i>
                     </div>
                 </div>
@@ -1375,6 +1775,53 @@
         </ul>
     </nav>
     
+    <!-- MODAL POUR LES DÉTAILS DE PAIEMENT -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-money-check-alt"></i> Enregistrer un Paiement</h2>
+            
+            <div class="form-group">
+                <label>Montant payé (Fcfa)</label>
+                <input type="number" id="payment-amount" placeholder="Montant payé" style="font-size: 1.2rem; font-weight: bold;">
+            </div>
+            
+            <div class="form-group">
+                <label>Date du paiement</label>
+                <input type="date" id="payment-date" value="">
+            </div>
+            
+            <div class="form-group">
+                <label>Méthode de paiement</label>
+                <select id="payment-method-modal">
+                    <option value="Espèces">Espèces</option>
+                    <option value="Mobile Money">Mobile Money</option>
+                    <option value="Virement">Virement bancaire</option>
+                    <option value="Carte">Carte bancaire</option>
+                    <option value="Chèque">Chèque</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Référence (numéro de transaction, etc.)</label>
+                <input type="text" id="payment-reference" placeholder="Référence du paiement">
+            </div>
+            
+            <div class="form-group">
+                <label>Notes supplémentaires</label>
+                <textarea id="payment-notes" rows="3" placeholder="Notes sur le paiement"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button id="confirm-payment" class="btn" style="background: var(--success);">
+                    <i class="fas fa-check"></i> Confirmer le paiement
+                </button>
+                <button id="cancel-payment" class="btn btn-outline">
+                    <i class="fas fa-times"></i> Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <div id="notification" class="notification"></div>
 
     <footer>
@@ -1387,46 +1834,74 @@
         // Initialisation de jsPDF
         const { jsPDF } = window.jspdf;
         
-        // Fonction debounce pour optimiser les performances
-        function debounce(func, wait) {
+        // Fonction debounce améliorée
+        function debounce(func, wait, immediate) {
             let timeout;
             return function executedFunction(...args) {
+                const context = this;
                 const later = () => {
-                    clearTimeout(timeout);
-                    func(...args);
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
                 };
+                const callNow = immediate && !timeout;
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
             };
         }
         
-        // Compression des données pour le localStorage
+        // Gestion du chargement
+        function showLoading(message = 'Chargement...') {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.querySelector('p').textContent = message;
+            overlay.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+        
+        // Compression des données
         function compressData(data) {
-            if (typeof LZString !== 'undefined') {
-                return LZString.compressToUTF16(JSON.stringify(data));
+            try {
+                if (typeof LZString !== 'undefined') {
+                    const json = JSON.stringify(data);
+                    if (json.length > 100000) {
+                        return LZString.compressToUTF16(json);
+                    }
+                    return json;
+                }
+                return JSON.stringify(data);
+            } catch (e) {
+                console.error('Erreur de compression:', e);
+                return JSON.stringify(data);
             }
-            return JSON.stringify(data);
         }
         
         function decompressData(compressedData) {
-            if (typeof LZString !== 'undefined') {
-                return JSON.parse(LZString.decompressFromUTF16(compressedData));
+            try {
+                if (typeof LZString !== 'undefined' && compressedData.length > 100000) {
+                    const decompressed = LZString.decompressFromUTF16(compressedData);
+                    if (decompressed) return JSON.parse(decompressed);
+                }
+                return JSON.parse(compressedData);
+            } catch (e) {
+                console.error('Erreur de décompression:', e);
+                return null;
             }
-            return JSON.parse(compressedData);
         }
         
-        // Gestion du stockage local avec compression
+        // Stockage local
         function saveToStorage(key, data) {
             try {
                 const compressed = compressData(data);
-                if (compressed.length > 5000000) { // 5MB limite
+                if (compressed.length > 5000000) {
                     throw new Error("Données trop volumineuses pour le stockage local");
                 }
                 localStorage.setItem(key, compressed);
                 return true;
             } catch (e) {
                 console.error("Erreur de sauvegarde:", e);
-                // Fallback sans compression
                 try {
                     localStorage.setItem(key, JSON.stringify(data));
                     return true;
@@ -1442,11 +1917,9 @@
                 const data = localStorage.getItem(key);
                 if (!data) return null;
                 
-                // Essayer de décompresser d'abord
                 try {
                     return decompressData(data);
                 } catch (e) {
-                    // Si échec, essayer de parser comme JSON normal
                     return JSON.parse(data);
                 }
             } catch (e) {
@@ -1468,44 +1941,160 @@
             logo: ''
         };
         
-        let currentInvoice = {
-            id: null,
-            clientName: '',
-            clientPhone: '',
-            clientAddress: '',
-            clientEmail: '',
-            date: new Date().toISOString().split('T')[0],
-            number: 'FAC-' + new Date().getFullYear() + '-' + (invoices.length + 1).toString().padStart(3, '0'),
-            items: [
-                { description: '', quantity: 1, price: 0, total: 0 }
-            ],
-            notes: '',
-            taxRate: 0,
-            discount: 0,
-            paymentMethod: 'Espèces',
-            subtotal: 0,
-            tax: 0,
-            total: 0,
-            status: 'En attente'
+        let currentInvoice = null;
+        let currentInvoiceForPayment = null;
+        
+        // Statuts disponibles
+        const STATUS = {
+            PENDING: 'En attente',
+            PAID: 'Payée',
+            OVERDUE: 'En retard',
+            CANCELLED: 'Annulée',
+            PARTIAL: 'Partiellement payée'
         };
         
-        // Initialisation de l'interface
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialiser la date du jour
-            document.getElementById('invoice-date').value = currentInvoice.date;
-            document.getElementById('invoice-number').value = currentInvoice.number;
+        // Créer une nouvelle facture vide
+        function createNewInvoice() {
+            const nextInvoiceNumber = invoices.length + 1;
+            const today = new Date().toISOString().split('T')[0];
+            const year = new Date().getFullYear();
             
-            // Charger les informations de l'entreprise
-            loadCompanyInfo();
+            // Date d'échéance par défaut (30 jours)
+            const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+            
+            currentInvoice = {
+                id: null,
+                clientName: '',
+                clientPhone: '',
+                clientAddress: '',
+                clientEmail: '',
+                date: today,
+                dueDate: dueDate.toISOString().split('T')[0],
+                number: `FAC-${year}-${nextInvoiceNumber.toString().padStart(4, '0')}`,
+                items: [
+                    { description: '', quantity: 1, price: 0, total: 0 }
+                ],
+                notes: '',
+                taxRate: 0,
+                discount: 0,
+                paymentMethod: 'Espèces',
+                status: STATUS.PENDING,
+                subtotal: 0,
+                tax: 0,
+                total: 0
+            };
+            
+            // Réinitialiser le formulaire
+            resetForm();
             
             // Mettre à jour l'aperçu
             updateInvoicePreview();
             
-            // Charger l'historique
-            loadInvoiceHistory();
+            // Cacher le bouton de duplication
+            document.getElementById('duplicate-invoice').style.display = 'none';
             
-            // Mettre à jour les statistiques
+            // Afficher le premier onglet
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector('.tab[data-tab="company-info"]').classList.add('active');
+            document.getElementById('company-info').classList.add('active');
+            
+            // Réinitialiser le sélecteur de statut
+            if (document.querySelector('.status-btn.status-pending')) {
+                document.querySelectorAll('.status-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector('.status-btn.status-pending').classList.add('active');
+            }
+            
+            // Masquer les détails de paiement
+            document.getElementById('payment-details-section').style.display = 'none';
+            
+            showNotification('Nouvelle facture créée!', 'success');
+        }
+        
+        // Réinitialiser le formulaire
+        function resetForm() {
+            if (!currentInvoice) return;
+            
+            // Réinitialiser les champs client
+            document.getElementById('client-name').value = currentInvoice.clientName;
+            document.getElementById('client-phone').value = currentInvoice.clientPhone;
+            document.getElementById('client-address').value = currentInvoice.clientAddress;
+            document.getElementById('client-email').value = currentInvoice.clientEmail;
+            
+            // Réinitialiser les champs facture
+            document.getElementById('invoice-date').value = currentInvoice.date;
+            document.getElementById('invoice-number').value = currentInvoice.number;
+            document.getElementById('notes').value = currentInvoice.notes;
+            document.getElementById('tax-rate').value = currentInvoice.taxRate;
+            document.getElementById('discount').value = currentInvoice.discount;
+            document.getElementById('payment-method').value = currentInvoice.paymentMethod;
+            document.getElementById('due-date').value = currentInvoice.dueDate;
+            
+            // Réinitialiser les articles
+            const itemsTable = document.getElementById('items-table');
+            itemsTable.innerHTML = '';
+            
+            // Ajouter un article vide
+            addEmptyItem();
+            
+            // Réinitialiser les erreurs de validation
+            document.querySelectorAll('.validation-error').forEach(error => {
+                error.classList.remove('show');
+            });
+        }
+        
+        // Ajouter un article vide
+        function addEmptyItem() {
+            const itemsTable = document.getElementById('items-table');
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td><input type="text" class="item-desc" placeholder="Description de l'article"></td>
+                <td><input type="number" class="item-qty" value="1" min="1"></td>
+                <td><input type="number" class="item-price" placeholder="0" min="0" step="0.01"></td>
+                <td class="item-total">0 Fcfa</td>
+                <td class="item-actions">
+                    <button class="remove-item" style="background: var(--danger); color: white;" title="Supprimer l'article">×</button>
+                </td>
+            `;
+            itemsTable.appendChild(newRow);
+            
+            // Ajouter les événements
+            const inputs = newRow.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    updateItemTotal(newRow);
+                    updateInvoiceData();
+                    updateInvoicePreview();
+                });
+            });
+            
+            const removeBtn = newRow.querySelector('.remove-item');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    const itemsTable = document.getElementById('items-table');
+                    if (itemsTable.children.length > 1) {
+                        itemsTable.removeChild(newRow);
+                        updateInvoiceData();
+                        updateInvoicePreview();
+                    } else {
+                        showNotification('Au moins un article est requis', 'error');
+                    }
+                });
+            }
+        }
+        
+        // Initialisation de l'interface
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser les statistiques
             updateStats();
+            
+            // Charger les informations de l'entreprise
+            loadCompanyInfo();
+            
+            // Créer une nouvelle facture par défaut
+            createNewInvoice();
             
             // Événements de navigation
             initNavigation();
@@ -1514,9 +2103,43 @@
             initFormEvents();
             
             // Charger les données initiales
+            loadInitialData();
+            
+            // Configurer le support hors ligne
+            setupOfflineSupport();
+            
+            // Initialiser la gestion des statuts
+            initStatusManagement();
+            
+            // Initialiser l'import
+            initImport();
+        });
+        
+        function initImport() {
+            const importFile = document.getElementById('import-file');
+            if (importFile) {
+                importFile.addEventListener('change', function(e) {
+                    importData(e);
+                });
+            }
+        }
+        
+        function loadInitialData() {
+            loadInvoiceHistory();
             loadAllInvoices();
             loadClientsList();
-        });
+            updateStatsPage();
+        }
+        
+        function setupOfflineSupport() {
+            window.addEventListener('online', () => {
+                showNotification('Vous êtes de nouveau en ligne', 'success');
+            });
+            
+            window.addEventListener('offline', () => {
+                showNotification('Vous êtes hors ligne. Vos données seront sauvegardées localement.', 'warning');
+            });
+        }
         
         // Initialisation de la navigation
         function initNavigation() {
@@ -1527,7 +2150,6 @@
                     const page = this.getAttribute('data-page');
                     showPage(page);
                     
-                    // Mettre à jour l'état actif
                     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                 });
@@ -1540,11 +2162,9 @@
                     const page = this.getAttribute('data-page');
                     showPage(page);
                     
-                    // Mettre à jour l'état actif
                     document.querySelectorAll('.mobile-nav-link').forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Mettre à jour aussi la navigation desktop
                     document.querySelectorAll('.nav-link').forEach(l => {
                         l.classList.remove('active');
                         if (l.getAttribute('data-page') === page) {
@@ -1557,17 +2177,14 @@
         
         // Afficher une page spécifique
         function showPage(pageId) {
-            // Cacher toutes les pages
             document.querySelectorAll('.page-section').forEach(page => {
                 page.classList.remove('active');
             });
             
-            // Afficher la page demandée
             const targetPage = document.getElementById(pageId + '-page');
             if (targetPage) {
                 targetPage.classList.add('active');
                 
-                // Actions spécifiques selon la page
                 switch(pageId) {
                     case 'history':
                         loadAllInvoices();
@@ -1578,13 +2195,29 @@
                     case 'stats':
                         updateStatsPage();
                         break;
+                    case 'new-invoice':
+                        // S'assurer qu'une facture est créée
+                        if (!currentInvoice) {
+                            createNewInvoice();
+                        }
+                        break;
                 }
             }
         }
         
         // Initialisation des événements des formulaires
         function initFormEvents() {
-            // Événements des boutons
+            // Bouton Nouvelle Facture
+            document.getElementById('new-invoice-btn').addEventListener('click', createNewInvoice);
+            
+            // Bouton Annuler
+            document.getElementById('clear-form').addEventListener('click', function() {
+                if (confirm('Voulez-vous vraiment annuler cette facture ? Les modifications non enregistrées seront perdues.')) {
+                    createNewInvoice();
+                }
+            });
+            
+            // Événements des autres boutons
             document.getElementById('add-item').addEventListener('click', addNewItem);
             document.getElementById('save-invoice').addEventListener('click', saveInvoice);
             document.getElementById('generate-pdf').addEventListener('click', generatePDF);
@@ -1595,25 +2228,17 @@
             });
             document.getElementById('duplicate-invoice').addEventListener('click', duplicateCurrentInvoice);
             
-            // Événements pour les informations de l'entreprise avec debounce
-            document.getElementById('company-name').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
-            document.getElementById('company-activity').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
-            document.getElementById('company-address').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
-            document.getElementById('company-phone').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
-            document.getElementById('company-email').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
-            document.getElementById('company-registration').addEventListener('input', 
-                debounce(updateCompanyInfo, 300)
-            );
+            // Événements pour les informations de l'entreprise
+            const companyFields = ['company-name', 'company-activity', 'company-address', 'company-phone', 'company-email', 'company-registration'];
+            companyFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', debounce(() => {
+                        updateCompanyInfo();
+                        updateInvoicePreview();
+                    }, 300));
+                }
+            });
             
             // Événements pour le logo
             document.getElementById('upload-logo-btn').addEventListener('click', function() {
@@ -1624,54 +2249,37 @@
             
             document.getElementById('company-logo').addEventListener('change', function(e) {
                 if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        document.getElementById('company-logo-preview').src = e.target.result;
-                        document.getElementById('company-logo-preview').style.display = 'block';
-                        document.getElementById('no-logo-text').style.display = 'none';
-                        document.getElementById('remove-logo-btn').style.display = 'inline-flex';
-                        
-                        // Sauvegarder le logo
-                        companyInfo.logo = e.target.result;
-                        saveToStorage('companyInfo', companyInfo);
-                        
-                        updateInvoicePreview();
-                    };
-                    reader.readAsDataURL(e.target.files[0]);
+                    handleLogoUpload(e.target.files[0])
+                        .then(dataUrl => {
+                            document.getElementById('company-logo-preview').src = dataUrl;
+                            document.getElementById('company-logo-preview').style.display = 'block';
+                            document.getElementById('no-logo-text').style.display = 'none';
+                            document.getElementById('remove-logo-btn').style.display = 'inline-flex';
+                            
+                            companyInfo.logo = dataUrl;
+                            saveToStorage('companyInfo', companyInfo);
+                            updateInvoicePreview();
+                        })
+                        .catch(error => {
+                            showNotification(error.message, 'error');
+                        });
                 }
             });
             
-            // Événements de saisie en temps réel avec debounce
-            document.getElementById('client-name').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('client-phone').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('client-address').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('client-email').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('invoice-date').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('invoice-number').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('notes').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('tax-rate').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('discount').addEventListener('input', 
-                debounce(updateInvoicePreview, 300)
-            );
-            document.getElementById('payment-method').addEventListener('change', 
-                debounce(updateInvoicePreview, 300)
-            );
+            // Événements pour les autres champs
+            const updateFields = [
+                'client-name', 'client-phone', 'client-address', 'client-email',
+                'invoice-date', 'invoice-number', 'notes', 'tax-rate', 'discount', 'payment-method', 'due-date'
+            ];
+            
+            updateFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('input', debounce(() => {
+                        updateInvoicePreview();
+                    }, 300));
+                }
+            });
             
             // Recherche dans l'historique
             document.getElementById('search-invoices').addEventListener('input', filterInvoices);
@@ -1681,45 +2289,146 @@
             // Gestion des onglets
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', function() {
-                    // Désactiver tous les onglets
                     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
                     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                     
-                    // Activer l'onglet cliqué
                     this.classList.add('active');
                     document.getElementById(this.dataset.tab).classList.add('active');
                 });
             });
             
-            // Initialiser les événements des articles existants
-            initItemsEvents();
+            // Gestion des statuts
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Retirer la classe active de tous les boutons
+                    document.querySelectorAll('.status-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    
+                    // Ajouter la classe active au bouton cliqué
+                    this.classList.add('active');
+                    
+                    // Afficher/masquer la section des détails de paiement
+                    const status = this.dataset.status;
+                    const paymentDetails = document.getElementById('payment-details-section');
+                    
+                    if (status === 'paid') {
+                        paymentDetails.style.display = 'block';
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('payment-date-input').value = today;
+                    } else {
+                        paymentDetails.style.display = 'none';
+                    }
+                    
+                    // Mettre à jour le statut dans l'objet facture
+                    if (currentInvoice) {
+                        currentInvoice.status = getStatusFromKey(status);
+                        
+                        // Si la facture est marquée comme payée, définir la date de paiement
+                        if (status === 'paid') {
+                            currentInvoice.paymentDate = document.getElementById('payment-date-input').value;
+                            currentInvoice.paymentReference = document.getElementById('payment-ref-input').value;
+                        }
+                        
+                        // Mettre à jour l'aperçu
+                        updateInvoicePreview();
+                    }
+                });
+            });
+            
+            // Événements pour les champs de paiement
+            document.getElementById('payment-date-input')?.addEventListener('change', function() {
+                if (currentInvoice) {
+                    currentInvoice.paymentDate = this.value;
+                }
+            });
+            
+            document.getElementById('payment-ref-input')?.addEventListener('input', function() {
+                if (currentInvoice) {
+                    currentInvoice.paymentReference = this.value;
+                }
+            });
         }
         
-        // Initialiser les événements pour les articles
-        function initItemsEvents() {
-            document.querySelectorAll('#items-table tr').forEach(row => {
-                const inputs = row.querySelectorAll('input');
-                inputs.forEach(input => {
-                    input.addEventListener('input', function() {
-                        updateItemTotal(row);
-                        updateInvoiceData();
-                        updateInvoicePreview();
-                    });
-                });
-                
-                const removeBtn = row.querySelector('.remove-item');
-                if (removeBtn) {
-                    removeBtn.addEventListener('click', function() {
-                        const itemsTable = document.getElementById('items-table');
-                        if (itemsTable.children.length > 1) {
-                            itemsTable.removeChild(row);
-                            updateInvoiceData();
-                            updateInvoicePreview();
-                        } else {
-                            showNotification('Au moins un article est requis', 'error');
-                        }
-                    });
+        function initStatusManagement() {
+            // Événements pour les boutons d'action de statut
+            setupStatusEvents();
+            
+            // Mettre à jour les statistiques avec les statuts
+            updateStatusStats();
+        }
+        
+        function setupStatusEvents() {
+            // Événement pour la page historique
+            document.getElementById('history-page').addEventListener('click', function(e) {
+                // Gérer les clics sur les boutons de changement de statut
+                if (e.target.closest('.mark-paid-btn')) {
+                    const invoiceId = e.target.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsPaid(invoiceId);
                 }
+                
+                if (e.target.closest('.mark-overdue-btn')) {
+                    const invoiceId = e.target.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsOverdue(invoiceId);
+                }
+                
+                if (e.target.closest('.mark-cancelled-btn')) {
+                    const invoiceId = e.target.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsCancelled(invoiceId);
+                }
+                
+                if (e.target.closest('.reminder-btn')) {
+                    const invoiceId = e.target.closest('.invoice-full-item').dataset.invoiceId;
+                    sendPaymentReminder(invoiceId);
+                }
+            });
+        }
+        
+        // Gestion des images
+        function handleLogoUpload(file) {
+            return new Promise((resolve, reject) => {
+                if (!file.type.match('image.*')) {
+                    reject(new Error('Veuillez sélectionner une image'));
+                    return;
+                }
+                
+                if (file.size > 2 * 1024 * 1024) {
+                    reject(new Error('L\'image est trop grande (max 2MB)'));
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        let width = img.width;
+                        let height = img.height;
+                        const maxSize = 800;
+                        
+                        if (width > maxSize || height > maxSize) {
+                            if (width > height) {
+                                height = (height * maxSize) / width;
+                                width = maxSize;
+                            } else {
+                                width = (width * maxSize) / height;
+                                height = maxSize;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        const optimizedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+                        resolve(optimizedDataUrl);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
             });
         }
         
@@ -1750,7 +2459,6 @@
             companyInfo.registration = document.getElementById('company-registration').value;
             
             saveToStorage('companyInfo', companyInfo);
-            updateInvoicePreview();
         }
         
         // Supprimer le logo
@@ -1781,19 +2489,7 @@
             `;
             itemsTable.appendChild(newRow);
             
-            // Ajouter l'événement de suppression
-            newRow.querySelector('.remove-item').addEventListener('click', function() {
-                const itemsTable = document.getElementById('items-table');
-                if (itemsTable.children.length > 1) {
-                    itemsTable.removeChild(newRow);
-                    updateInvoiceData();
-                    updateInvoicePreview();
-                } else {
-                    showNotification('Au moins un article est requis', 'error');
-                }
-            });
-            
-            // Ajouter les événements de mise à jour
+            // Ajouter les événements
             const inputs = newRow.querySelectorAll('input');
             inputs.forEach(input => {
                 input.addEventListener('input', function() {
@@ -1803,13 +2499,29 @@
                 });
             });
             
+            const removeBtn = newRow.querySelector('.remove-item');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    const itemsTable = document.getElementById('items-table');
+                    if (itemsTable.children.length > 1) {
+                        itemsTable.removeChild(newRow);
+                        updateInvoiceData();
+                        updateInvoicePreview();
+                    } else {
+                        showNotification('Au moins un article est requis', 'error');
+                    }
+                });
+            }
+            
             // Ajouter le nouvel article aux données
-            currentInvoice.items.push({
-                description: '',
-                quantity: 1,
-                price: 0,
-                total: 0
-            });
+            if (currentInvoice) {
+                currentInvoice.items.push({
+                    description: '',
+                    quantity: 1,
+                    price: 0,
+                    total: 0
+                });
+            }
         }
         
         // Mettre à jour le total d'un article
@@ -1819,18 +2531,22 @@
             const total = qty * price;
             row.querySelector('.item-total').textContent = formatCurrency(total);
             
-            // Mettre à jour les données de l'article
-            const index = Array.from(row.parentNode.children).indexOf(row);
-            if (index >= 0 && index < currentInvoice.items.length) {
-                currentInvoice.items[index].description = row.querySelector('.item-desc').value;
-                currentInvoice.items[index].quantity = qty;
-                currentInvoice.items[index].price = price;
-                currentInvoice.items[index].total = total;
+            if (currentInvoice) {
+                const rows = Array.from(row.parentNode.children);
+                const index = rows.indexOf(row);
+                if (index >= 0 && index < currentInvoice.items.length) {
+                    currentInvoice.items[index].description = row.querySelector('.item-desc').value;
+                    currentInvoice.items[index].quantity = qty;
+                    currentInvoice.items[index].price = price;
+                    currentInvoice.items[index].total = total;
+                }
             }
         }
         
         // Mettre à jour toutes les données de la facture
         function updateInvoiceData() {
+            if (!currentInvoice) return;
+            
             currentInvoice.clientName = document.getElementById('client-name').value;
             currentInvoice.clientPhone = document.getElementById('client-phone').value;
             currentInvoice.clientAddress = document.getElementById('client-address').value;
@@ -1841,6 +2557,20 @@
             currentInvoice.taxRate = parseFloat(document.getElementById('tax-rate').value) || 0;
             currentInvoice.discount = parseFloat(document.getElementById('discount').value) || 0;
             currentInvoice.paymentMethod = document.getElementById('payment-method').value;
+            currentInvoice.dueDate = document.getElementById('due-date').value;
+            
+            // Récupérer le statut sélectionné
+            const activeStatusBtn = document.querySelector('.status-btn.active');
+            if (activeStatusBtn) {
+                const statusKey = activeStatusBtn.dataset.status;
+                currentInvoice.status = getStatusFromKey(statusKey);
+                
+                // Si la facture est marquée comme payée, enregistrer les détails
+                if (statusKey === 'paid') {
+                    currentInvoice.paymentDate = document.getElementById('payment-date-input').value || new Date().toISOString().split('T')[0];
+                    currentInvoice.paymentReference = document.getElementById('payment-ref-input').value;
+                }
+            }
             
             // Calculer les totaux
             currentInvoice.subtotal = currentInvoice.items.reduce((sum, item) => sum + item.total, 0);
@@ -1850,13 +2580,23 @@
         
         // Mettre à jour l'aperçu de la facture
         function updateInvoicePreview() {
+            if (!currentInvoice) return;
+            
             updateInvoiceData();
             
             const preview = document.getElementById('invoice-preview-content');
+            
+            // Ajouter l'affichage du statut dans l'aperçu
+            const statusKey = getStatusKey(currentInvoice.status);
+            const badgeClass = getBadgeClass(currentInvoice.status);
+            const badgeIcon = getBadgeIcon(currentInvoice.status);
+            
+            const statusBadge = `<span class="badge ${badgeClass}" style="margin-left: 10px;"><i class="fas ${badgeIcon}"></i> ${currentInvoice.status}</span>`;
+            
             let html = `
                 <div class="invoice-header">
                     <div>
-                        <div class="invoice-title">FACTURE</div>
+                        <div class="invoice-title">FACTURE ${statusBadge}</div>
                         <div style="margin-top: 5px; color: var(--gray);">
                             ${sanitizeInput(companyInfo.name) || '[Nom de l\'entreprise]'}
                             ${companyInfo.activity ? ` - ${sanitizeInput(companyInfo.activity)}` : ''}
@@ -1889,9 +2629,10 @@
                     <div>
                         <strong>Facture N°:</strong> ${sanitizeInput(currentInvoice.number)}<br>
                         <strong>Date:</strong> ${formatDate(currentInvoice.date)}<br>
-                        <strong>Échéance:</strong> ${formatDate(currentInvoice.date)}
+                        <strong>Échéance:</strong> ${formatDate(currentInvoice.dueDate || currentInvoice.date)}
                     </div>
                     <div>
+                        <strong>Statut:</strong> ${currentInvoice.status}<br>
                         <strong>Méthode de paiement:</strong> ${currentInvoice.paymentMethod}<br>
                         ${currentInvoice.taxRate > 0 ? `<strong>TVA:</strong> ${currentInvoice.taxRate}%<br>` : ''}
                         ${currentInvoice.discount > 0 ? `<strong>Remise:</strong> ${formatCurrency(currentInvoice.discount)}` : ''}
@@ -1972,6 +2713,18 @@
                 </div>
             `;
             
+            // Ajouter les informations de paiement si la facture est payée
+            if (currentInvoice.status === STATUS.PAID && currentInvoice.paymentDate) {
+                html += `
+                    <div style="margin-top: 25px; padding: 15px; background: #d4edda; border-radius: 8px; border-left: 4px solid #28a745;">
+                        <strong><i class="fas fa-check-circle"></i> FACTURE PAYÉE</strong><br>
+                        Date de paiement: ${formatDate(currentInvoice.paymentDate)}<br>
+                        ${currentInvoice.paymentReference ? `Référence: ${currentInvoice.paymentReference}<br>` : ''}
+                        ${currentInvoice.paymentNotes ? `Notes: ${currentInvoice.paymentNotes}` : ''}
+                    </div>
+                `;
+            }
+            
             if (currentInvoice.notes) {
                 html += `
                     <div style="margin-top: 25px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
@@ -1988,26 +2741,21 @@
         function validateInvoice() {
             const errors = [];
             
-            // Réinitialiser les erreurs
             document.querySelectorAll('.validation-error').forEach(error => {
                 error.classList.remove('show');
             });
             
-            // Validation du nom de l'entreprise
             if (!companyInfo.name.trim()) {
                 document.getElementById('company-name-error').classList.add('show');
                 errors.push("Le nom de l'entreprise est requis");
             }
             
-            // Validation du nom du client
             if (!currentInvoice.clientName.trim()) {
                 document.getElementById('client-name-error').classList.add('show');
                 errors.push("Le nom du client est requis");
             }
             
-            // Validation des articles
             const validItems = currentInvoice.items.filter(item => {
-                // Un article est valide s'il a une description ET un prix > 0
                 const hasDescription = item.description && item.description.trim() !== '';
                 const hasValidPrice = item.price > 0;
                 return hasDescription && hasValidPrice;
@@ -2018,14 +2766,22 @@
                 errors.push("Au moins un article valide est requis");
             }
             
+            if (currentInvoice.total < 0) {
+                errors.push("Le total ne peut pas être négatif");
+            }
+            
             return errors;
         }
         
         // Enregistrer la facture
         function saveInvoice() {
+            if (!currentInvoice) {
+                showNotification('Veuillez d\'abord créer une nouvelle facture', 'error');
+                return;
+            }
+            
             updateInvoiceData();
             
-            // Valider les données
             const errors = validateInvoice();
             if (errors.length > 0) {
                 showNotification('Veuillez corriger les erreurs avant d\'enregistrer: ' + errors.join(', '), 'error');
@@ -2079,8 +2835,14 @@
             
             // Mettre à jour les statistiques
             updateStats();
+            updateStatusStats();
             
             showNotification('Facture enregistrée avec succès!', 'success');
+            
+            // Créer une nouvelle facture après enregistrement
+            setTimeout(() => {
+                createNewInvoice();
+            }, 1500);
         }
         
         // Charger l'historique des factures
@@ -2102,14 +2864,11 @@
                 const item = document.createElement('li');
                 item.className = 'history-item';
                 
-                let statusBadge = '';
-                if (invoice.status === 'Payée') {
-                    statusBadge = '<span class="badge badge-success">Payée</span>';
-                } else if (invoice.status === 'En retard') {
-                    statusBadge = '<span class="badge badge-danger">En retard</span>';
-                } else {
-                    statusBadge = '<span class="badge badge-warning">En attente</span>';
-                }
+                const statusKey = getStatusKey(invoice.status);
+                const badgeClass = getBadgeClass(invoice.status);
+                const badgeIcon = getBadgeIcon(invoice.status);
+                
+                const statusBadge = `<span class="badge ${badgeClass}"><i class="fas ${badgeIcon}"></i> ${invoice.status}</span>`;
                 
                 item.innerHTML = `
                     <div class="history-title">
@@ -2147,19 +2906,84 @@
                 return;
             }
             
-            let html = '<div class="history-list">';
+            let html = `
+                <div class="status-filter">
+                    <button class="filter-btn filter-all active" data-filter="all">
+                        <i class="fas fa-list"></i> Toutes
+                    </button>
+                    <button class="filter-btn filter-pending" data-filter="pending">
+                        <i class="fas fa-clock"></i> En attente
+                    </button>
+                    <button class="filter-btn filter-paid" data-filter="paid">
+                        <i class="fas fa-check-circle"></i> Payées
+                    </button>
+                    <button class="filter-btn filter-overdue" data-filter="overdue">
+                        <i class="fas fa-exclamation-triangle"></i> En retard
+                    </button>
+                    <button class="filter-btn filter-cancelled" data-filter="cancelled">
+                        <i class="fas fa-ban"></i> Annulées
+                    </button>
+                </div>
+                <div class="history-list">
+            `;
+            
             invoices.slice().reverse().forEach(invoice => {
-                let statusBadge = '';
-                if (invoice.status === 'Payée') {
-                    statusBadge = '<span class="badge badge-success">Payée</span>';
-                } else if (invoice.status === 'En retard') {
-                    statusBadge = '<span class="badge badge-danger">En retard</span>';
-                } else {
-                    statusBadge = '<span class="badge badge-warning">En attente</span>';
+                const statusKey = getStatusKey(invoice.status);
+                const badgeClass = getBadgeClass(invoice.status);
+                const badgeIcon = getBadgeIcon(invoice.status);
+                
+                let statusBadge = `<span class="badge ${badgeClass}"><i class="fas ${badgeIcon}"></i> ${invoice.status}</span>`;
+                
+                // Actions disponibles selon le statut
+                let actions = '';
+                if (invoice.status !== STATUS.PAID && invoice.status !== STATUS.CANCELLED) {
+                    actions = `
+                        <div class="status-actions">
+                            <button class="btn mark-paid-btn">
+                                <i class="fas fa-check"></i> Marquer comme payée
+                            </button>
+                            <button class="btn mark-overdue-btn">
+                                <i class="fas fa-exclamation-triangle"></i> En retard
+                            </button>
+                            <button class="btn mark-cancelled-btn">
+                                <i class="fas fa-ban"></i> Annuler
+                            </button>
+                            <button class="btn reminder-btn">
+                                <i class="fas fa-bell"></i> Rappel
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                // Informations de paiement si la facture est payée
+                let paymentInfo = '';
+                if (invoice.status === STATUS.PAID && invoice.paymentDate) {
+                    paymentInfo = `
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: var(--success);">
+                            <i class="fas fa-calendar-check"></i> Payée le ${formatDate(invoice.paymentDate)}
+                            ${invoice.paymentReference ? ` (Réf: ${invoice.paymentReference})` : ''}
+                        </div>
+                    `;
+                }
+                
+                // Avertissement si la date d'échéance est dépassée
+                let overdueWarning = '';
+                if (invoice.dueDate && invoice.status === STATUS.PENDING) {
+                    const dueDate = new Date(invoice.dueDate);
+                    const today = new Date();
+                    const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysOverdue > 0) {
+                        overdueWarning = `
+                            <div class="due-date-warning">
+                                <i class="fas fa-exclamation-circle"></i> En retard de ${daysOverdue} jour(s)
+                            </div>
+                        `;
+                    }
                 }
                 
                 html += `
-                    <div class="invoice-full-item" onclick="loadInvoiceFromHistory('${invoice.id}')">
+                    <div class="invoice-full-item" data-invoice-id="${invoice.id}" data-invoice-status="${statusKey}" onclick="loadInvoiceFromHistory('${invoice.id}')">
                         <div class="history-title">
                             ${sanitizeInput(invoice.clientName) || 'Client sans nom'} ${statusBadge}
                         </div>
@@ -2171,11 +2995,76 @@
                             <span>${sanitizeInput(invoice.number)}</span>
                             <span>${invoice.paymentMethod}</span>
                         </div>
+                        ${paymentInfo}
+                        ${overdueWarning}
+                        ${actions}
                     </div>
                 `;
             });
+            
             html += '</div>';
             allInvoicesList.innerHTML = html;
+            
+            // Réattacher les événements des filtres
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    filterInvoicesByStatus(filter);
+                });
+            });
+            
+            // Réattacher les événements des boutons d'action
+            document.querySelectorAll('.mark-paid-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const invoiceId = this.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsPaid(invoiceId);
+                });
+            });
+            
+            document.querySelectorAll('.mark-overdue-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const invoiceId = this.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsOverdue(invoiceId);
+                });
+            });
+            
+            document.querySelectorAll('.mark-cancelled-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const invoiceId = this.closest('.invoice-full-item').dataset.invoiceId;
+                    markInvoiceAsCancelled(invoiceId);
+                });
+            });
+            
+            document.querySelectorAll('.reminder-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const invoiceId = this.closest('.invoice-full-item').dataset.invoiceId;
+                    sendPaymentReminder(invoiceId);
+                });
+            });
+        }
+        
+        // Filtrer les factures par statut
+        function filterInvoicesByStatus(status) {
+            const invoiceItems = document.querySelectorAll('#all-invoices-list .invoice-full-item');
+            
+            invoiceItems.forEach(item => {
+                const invoiceStatus = item.dataset.invoiceStatus;
+                
+                if (status === 'all' || invoiceStatus === status) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         }
         
         // Charger la liste des clients
@@ -2238,9 +3127,73 @@
             const totalRevenue = invoices.reduce((sum, invoice) => sum + invoice.total, 0);
             document.getElementById('stats-total-revenue').textContent = formatCurrency(totalRevenue);
             
-            const paidInvoices = invoices.filter(invoice => invoice.status === 'Payée').length;
+            const paidInvoices = invoices.filter(invoice => invoice.status === STATUS.PAID).length;
             const paymentRate = invoices.length > 0 ? Math.round((paidInvoices / invoices.length) * 100) : 0;
             document.getElementById('stats-payment-rate').textContent = paymentRate + '%';
+            
+            // Mettre à jour les statistiques des statuts
+            updateDetailedStatusStats();
+        }
+        
+        // Mettre à jour les statistiques détaillées des statuts
+        function updateDetailedStatusStats() {
+            const stats = {
+                pending: invoices.filter(inv => inv.status === STATUS.PENDING).length,
+                paid: invoices.filter(inv => inv.status === STATUS.PAID).length,
+                overdue: invoices.filter(inv => inv.status === STATUS.OVERDUE).length,
+                cancelled: invoices.filter(inv => inv.status === STATUS.CANCELLED).length,
+                total: invoices.length
+            };
+            
+            const statusStatsSection = document.getElementById('status-stats-section');
+            statusStatsSection.innerHTML = `
+                <div class="status-summary-card status-pending">
+                    <div class="status-summary-value">${stats.pending}</div>
+                    <div>En attente</div>
+                </div>
+                <div class="status-summary-card status-paid">
+                    <div class="status-summary-value">${stats.paid}</div>
+                    <div>Payées</div>
+                </div>
+                <div class="status-summary-card status-overdue">
+                    <div class="status-summary-value">${stats.overdue}</div>
+                    <div>En retard</div>
+                </div>
+                <div class="status-summary-card status-cancelled">
+                    <div class="status-summary-value">${stats.cancelled}</div>
+                    <div>Annulées</div>
+                </div>
+            `;
+        }
+        
+        // Mettre à jour les statistiques des statuts
+        function updateStatusStats() {
+            // Compter les factures par statut
+            const stats = {
+                pending: 0,
+                paid: 0,
+                overdue: 0,
+                cancelled: 0,
+                total: invoices.length
+            };
+            
+            invoices.forEach(invoice => {
+                const statusKey = getStatusKey(invoice.status);
+                if (stats[statusKey] !== undefined) {
+                    stats[statusKey]++;
+                }
+            });
+            
+            // Mettre à jour l'affichage des statistiques
+            document.getElementById('stats-total-invoices').textContent = stats.total;
+            document.getElementById('paid-invoices').textContent = stats.paid;
+            
+            // Calculer le taux de paiement
+            const paymentRate = stats.total > 0 ? Math.round((stats.paid / stats.total) * 100) : 0;
+            document.getElementById('stats-payment-rate').textContent = paymentRate + '%';
+            
+            // Mettre à jour les statistiques détaillées
+            updateDetailedStatusStats();
         }
         
         // Filtrer les factures dans l'historique
@@ -2288,17 +3241,6 @@
             });
         }
         
-        // Recherche avancée dans les factures
-        function advancedSearch(term) {
-            return invoices.filter(invoice => 
-                invoice.clientName.toLowerCase().includes(term) ||
-                invoice.number.toLowerCase().includes(term) ||
-                invoice.items.some(item => 
-                    item.description.toLowerCase().includes(term)
-                )
-            );
-        }
-        
         // Charger une facture depuis l'historique
         function loadInvoiceFromHistory(invoiceId) {
             const invoice = invoices.find(inv => inv.id == invoiceId);
@@ -2323,6 +3265,7 @@
             document.getElementById('tax-rate').value = currentInvoice.taxRate;
             document.getElementById('discount').value = currentInvoice.discount;
             document.getElementById('payment-method').value = currentInvoice.paymentMethod;
+            document.getElementById('due-date').value = currentInvoice.dueDate;
             
             // Mettre à jour les articles
             const itemsTable = document.getElementById('items-table');
@@ -2340,10 +3283,53 @@
                     </td>
                 `;
                 itemsTable.appendChild(row);
+                
+                // Ajouter les événements
+                const inputs = row.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        updateItemTotal(row);
+                        updateInvoiceData();
+                        updateInvoicePreview();
+                    });
+                });
+                
+                const removeBtn = row.querySelector('.remove-item');
+                if (removeBtn) {
+                    removeBtn.addEventListener('click', function() {
+                        const itemsTable = document.getElementById('items-table');
+                        if (itemsTable.children.length > 1) {
+                            itemsTable.removeChild(row);
+                            updateInvoiceData();
+                            updateInvoicePreview();
+                        } else {
+                            showNotification('Au moins un article est requis', 'error');
+                        }
+                    });
+                }
             });
             
-            // Réinitialiser les événements des articles
-            initItemsEvents();
+            // Mettre à jour le sélecteur de statut
+            const statusKey = getStatusKey(invoice.status);
+            document.querySelectorAll('.status-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.status === statusKey) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Afficher/masquer les détails de paiement
+            if (statusKey === 'paid') {
+                document.getElementById('payment-details-section').style.display = 'block';
+                if (invoice.paymentDate) {
+                    document.getElementById('payment-date-input').value = invoice.paymentDate;
+                }
+                if (invoice.paymentReference) {
+                    document.getElementById('payment-ref-input').value = invoice.paymentReference;
+                }
+            } else {
+                document.getElementById('payment-details-section').style.display = 'none';
+            }
             
             // Afficher le bouton de duplication
             document.getElementById('duplicate-invoice').style.display = 'inline-flex';
@@ -2356,14 +3342,17 @@
         
         // Dupliquer la facture actuelle
         function duplicateCurrentInvoice() {
-            if (!currentInvoice.id) return;
+            if (!currentInvoice || !currentInvoice.id) return;
             
             const duplicated = {
                 ...currentInvoice,
                 id: Date.now(),
                 number: `FAC-${new Date().getFullYear()}-${invoices.length + 1}`,
                 date: new Date().toISOString().split('T')[0],
-                status: 'En attente'
+                status: STATUS.PENDING,
+                paymentDate: null,
+                paymentReference: null,
+                paymentNotes: null
             };
             
             invoices.push(duplicated);
@@ -2372,207 +3361,368 @@
             showNotification('Facture dupliquée avec succès!', 'success');
         }
         
+        // Marquer une facture comme payée
+        function markInvoiceAsPaid(invoiceId) {
+            const invoice = invoices.find(inv => inv.id == invoiceId);
+            if (!invoice) return;
+            
+            // Ouvrir le modal de paiement
+            openPaymentModal(invoice);
+        }
+        
+        // Ouvrir le modal de paiement
+        function openPaymentModal(invoice) {
+            currentInvoiceForPayment = invoice;
+            
+            const modal = document.getElementById('paymentModal');
+            modal.style.display = 'flex';
+            
+            // Pré-remplir les champs
+            document.getElementById('payment-amount').value = invoice.total;
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('payment-date').value = today;
+            document.getElementById('payment-reference').value = '';
+            document.getElementById('payment-notes').value = '';
+            
+            // Événements du modal
+            document.getElementById('confirm-payment').onclick = confirmPayment;
+            document.getElementById('cancel-payment').onclick = closePaymentModal;
+            
+            // Fermer le modal en cliquant à l'extérieur
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    closePaymentModal();
+                }
+            };
+        }
+        
+        // Fermer le modal de paiement
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            currentInvoiceForPayment = null;
+        }
+        
+        // Confirmer le paiement
+        function confirmPayment() {
+            if (!currentInvoiceForPayment) return;
+            
+            const amount = parseFloat(document.getElementById('payment-amount').value);
+            const date = document.getElementById('payment-date').value;
+            const method = document.getElementById('payment-method-modal').value;
+            const reference = document.getElementById('payment-reference').value;
+            const notes = document.getElementById('payment-notes').value;
+            
+            if (!amount || amount <= 0) {
+                showNotification('Veuillez entrer un montant valide', 'error');
+                return;
+            }
+            
+            // Mettre à jour la facture
+            currentInvoiceForPayment.status = amount >= currentInvoiceForPayment.total ? STATUS.PAID : STATUS.PARTIAL;
+            currentInvoiceForPayment.paymentDate = date;
+            currentInvoiceForPayment.paymentMethod = method;
+            currentInvoiceForPayment.paymentReference = reference;
+            currentInvoiceForPayment.paymentNotes = notes;
+            currentInvoiceForPayment.amountPaid = amount;
+            
+            // Mettre à jour les données
+            saveToStorage('invoices', invoices);
+            
+            // Recharger l'affichage
+            loadAllInvoices();
+            updateStatusStats();
+            
+            // Fermer le modal
+            closePaymentModal();
+            
+            showNotification('Paiement enregistré avec succès!', 'success');
+        }
+        
+        // Marquer une facture comme en retard
+        function markInvoiceAsOverdue(invoiceId) {
+            const invoice = invoices.find(inv => inv.id == invoiceId);
+            if (invoice) {
+                invoice.status = STATUS.OVERDUE;
+                saveToStorage('invoices', invoices);
+                loadAllInvoices();
+                updateStatusStats();
+                showNotification('Facture marquée comme en retard', 'success');
+            }
+        }
+        
+        // Marquer une facture comme annulée
+        function markInvoiceAsCancelled(invoiceId) {
+            const invoice = invoices.find(inv => inv.id == invoiceId);
+            if (invoice) {
+                invoice.status = STATUS.CANCELLED;
+                saveToStorage('invoices', invoices);
+                loadAllInvoices();
+                updateStatusStats();
+                showNotification('Facture annulée', 'success');
+            }
+        }
+        
+        // Envoyer un rappel de paiement
+        function sendPaymentReminder(invoiceId) {
+            const invoice = invoices.find(inv => inv.id == invoiceId);
+            if (!invoice) return;
+            
+            // Créer un message de rappel
+            let message = `Bonjour ${invoice.clientName},\n\n`;
+            message += `Rappel concernant la facture ${invoice.number} d'un montant de ${formatCurrency(invoice.total)}.\n`;
+            message += `Date d'échéance: ${formatDate(invoice.dueDate || invoice.date)}\n\n`;
+            message += `Merci de régler cette facture dans les meilleurs délais.\n\n`;
+            message += `Cordialement,\n${companyInfo.name || 'Votre entreprise'}`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+            
+            showNotification('Rappel de paiement prêt à être envoyé', 'success');
+        }
+        
         // Générer le PDF
-        function generatePDF() {
-            updateInvoiceData();
+        async function generatePDF() {
+            if (!currentInvoice) {
+                showNotification('Veuillez d\'abord créer une facture', 'error');
+                return;
+            }
+            
+            showLoading('Génération du PDF...');
             
             try {
-                // Créer un nouveau document PDF
+                updateInvoiceData();
+                
                 const doc = new jsPDF();
                 
-                // Ajouter le contenu de la facture
-                doc.setFontSize(20);
-                doc.setTextColor(46, 134, 171);
-                doc.text('FACTURE', 20, 20);
-                
-                doc.setFontSize(10);
-                doc.setTextColor(100, 100, 100);
-                doc.text('FacturaPro - Application de facturation', 20, 28);
-                
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(`N° ${currentInvoice.number}`, 160, 20);
-                
-                // Logo dans le PDF
-                if (companyInfo.logo) {
-                    try {
-                        // Ajouter le logo en base64
-                        doc.addImage(companyInfo.logo, 'JPEG', 160, 35, 30, 30);
-                    } catch (e) {
-                        console.log("Impossible d'ajouter le logo au PDF:", e);
-                    }
-                }
-                
-                // Informations de l'entreprise
-                doc.setFontSize(12);
-                doc.text('De:', 20, 45);
-                doc.setFont(undefined, 'bold');
-                doc.text(companyInfo.name || '[Nom de l\'entreprise]', 20, 53);
-                doc.setFont(undefined, 'normal');
-                
-                if (companyInfo.phone) {
-                    doc.text(`Tél: ${companyInfo.phone}`, 20, 61);
-                }
-                
-                doc.text(companyInfo.address || '[Adresse]', 20, 69);
-                
-                if (companyInfo.email) {
-                    doc.text(`Email: ${companyInfo.email}`, 20, 77);
-                }
-                
-                if (companyInfo.registration) {
-                    doc.text(`Immatriculation: ${companyInfo.registration}`, 20, 85);
-                }
-                
-                // Informations du client
-                doc.text('À:', 20, 100);
-                doc.setFont(undefined, 'bold');
-                doc.text(currentInvoice.clientName || '[Nom du client]', 20, 108);
-                doc.setFont(undefined, 'normal');
-                
-                if (currentInvoice.clientPhone) {
-                    doc.text(`Tél: ${currentInvoice.clientPhone}`, 20, 116);
-                }
-                
-                doc.text(currentInvoice.clientAddress || '[Adresse du client]', 20, 124);
-                
-                if (currentInvoice.clientEmail) {
-                    doc.text(`Email: ${currentInvoice.clientEmail}`, 20, 132);
-                }
-                
-                // Informations de la facture
-                doc.text(`Date: ${formatDate(currentInvoice.date)}`, 160, 100);
-                doc.text(`Échéance: ${formatDate(currentInvoice.date)}`, 160, 108);
-                doc.text(`Méthode de paiement: ${currentInvoice.paymentMethod}`, 160, 116);
-                
-                // En-tête du tableau
-                let yPosition = 150;
-                doc.setFillColor(46, 134, 171);
-                doc.rect(20, yPosition, 170, 10, 'F');
-                doc.setTextColor(255, 255, 255);
-                doc.text('Description', 22, yPosition + 7);
-                doc.text('Quantité', 120, yPosition + 7);
-                doc.text('Prix unitaire', 140, yPosition + 7);
-                doc.text('Total', 170, yPosition + 7, { align: 'right' });
-                
-                yPosition += 10;
-                doc.setTextColor(0, 0, 0);
-                
-                // Articles
-                let hasItems = false;
-                currentInvoice.items.forEach(item => {
-                    if (item.description || item.price > 0) {
-                        hasItems = true;
-                        
-                        // Gérer les sauts de page
-                        if (yPosition > 250) {
-                            doc.addPage();
-                            yPosition = 20;
-                            
-                            // Réafficher l'en-tête du tableau sur la nouvelle page
-                            doc.setFillColor(46, 134, 171);
-                            doc.rect(20, yPosition, 170, 10, 'F');
-                            doc.setTextColor(255, 255, 255);
-                            doc.text('Description', 22, yPosition + 7);
-                            doc.text('Quantité', 120, yPosition + 7);
-                            doc.text('Prix unitaire', 140, yPosition + 7);
-                            doc.text('Total', 170, yPosition + 7, { align: 'right' });
-                            yPosition += 10;
-                            doc.setTextColor(0, 0, 0);
-                        }
-                        
-                        // Gérer les descriptions longues
-                        const descriptionLines = doc.splitTextToSize(item.description || '', 80);
-                        const lineHeight = 7;
-                        
-                        descriptionLines.forEach((line, index) => {
-                            if (yPosition > 250 && index > 0) {
-                                doc.addPage();
-                                yPosition = 20;
-                            }
-                            doc.text(line, 22, yPosition + 7);
-                            if (index === 0) {
-                                doc.text(formatNumber(item.quantity), 120, yPosition + 7);
-                                doc.text(formatCurrency(item.price), 140, yPosition + 7);
-                                doc.text(formatCurrency(item.total), 170, yPosition + 7, { align: 'right' });
-                            }
-                            yPosition += lineHeight;
-                        });
-                        
-                        // Si description multi-lignes, ajuster la position
-                        if (descriptionLines.length > 1) {
-                            yPosition += (descriptionLines.length - 1) * lineHeight;
-                        }
-                    }
+                doc.setProperties({
+                    title: `Facture ${currentInvoice.number}`,
+                    subject: 'Facture commerciale',
+                    author: companyInfo.name || 'FacturaPro',
+                    keywords: 'facture, invoice, africa, fcfa',
+                    creator: 'FacturaPro'
                 });
                 
-                if (!hasItems) {
-                    doc.text('Aucun article ajouté', 22, yPosition + 7);
-                    yPosition += 10;
-                }
+                await generatePDFContent(doc);
                 
-                yPosition += 10;
-                
-                // Totaux
-                doc.text(`Sous-total: ${formatCurrency(currentInvoice.subtotal)}`, 150, yPosition, { align: 'right' });
-                yPosition += 7;
-                
-                if (currentInvoice.taxRate > 0) {
-                    doc.text(`TVA (${currentInvoice.taxRate}%): ${formatCurrency(currentInvoice.tax)}`, 150, yPosition, { align: 'right' });
-                    yPosition += 7;
-                }
-                
-                if (currentInvoice.discount > 0) {
-                    doc.text(`Remise: -${formatCurrency(currentInvoice.discount)}`, 150, yPosition, { align: 'right' });
-                    yPosition += 7;
-                }
-                
-                doc.setFontSize(14);
-                doc.setFont(undefined, 'bold');
-                doc.text(`Total: ${formatCurrency(currentInvoice.total)}`, 150, yPosition, { align: 'right' });
-                
-                // Notes
-                if (currentInvoice.notes) {
-                    yPosition += 20;
-                    doc.setFontSize(10);
-                    doc.setFont(undefined, 'normal');
-                    doc.text('Notes:', 20, yPosition);
-                    yPosition += 7;
-                    const splitNotes = doc.splitTextToSize(currentInvoice.notes, 170);
-                    doc.text(splitNotes, 20, yPosition);
-                }
-                
-                // Pied de page
-                const pageHeight = doc.internal.pageSize.height;
-                doc.setFontSize(8);
-                doc.setTextColor(100, 100, 100);
-                doc.text('FacturaPro - Application de facturation pour professionnels africains', 105, pageHeight - 10, { align: 'center' });
-                
-                // Sauvegarder le PDF
                 doc.save(`facture-${currentInvoice.number}.pdf`);
                 
                 showNotification('PDF généré avec succès!', 'success');
             } catch (error) {
                 console.error('Erreur lors de la génération du PDF:', error);
-                showNotification('Erreur lors de la génération du PDF', 'error');
+                showNotification('Erreur lors de la génération du PDF: ' + error.message, 'error');
+            } finally {
+                hideLoading();
             }
+        }
+        
+        async function generatePDFContent(doc) {
+            doc.setFontSize(20);
+            doc.setTextColor(46, 134, 171);
+            doc.text('FACTURE', 20, 20);
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('FacturaPro - Application de facturation', 20, 28);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`N° ${currentInvoice.number}`, 160, 20);
+            
+            // Ajouter le statut
+            doc.setFontSize(10);
+            const statusText = `Statut: ${currentInvoice.status}`;
+            doc.text(statusText, 160, 28);
+            
+            if (companyInfo.logo) {
+                try {
+                    const logoData = companyInfo.logo;
+                    if (logoData.startsWith('data:image/')) {
+                        const img = new Image();
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                            img.src = logoData;
+                        });
+                        
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        
+                        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+                        doc.addImage(imgData, 'JPEG', 160, 35, 30, 30);
+                    }
+                } catch (e) {
+                    console.log("Impossible d'ajouter le logo au PDF:", e);
+                }
+            }
+            
+            doc.setFontSize(12);
+            doc.text('De:', 20, 45);
+            doc.setFont(undefined, 'bold');
+            doc.text(companyInfo.name || '[Nom de l\'entreprise]', 20, 53);
+            doc.setFont(undefined, 'normal');
+            
+            if (companyInfo.phone) {
+                doc.text(`Tél: ${companyInfo.phone}`, 20, 61);
+            }
+            
+            doc.text(companyInfo.address || '[Adresse]', 20, 69);
+            
+            if (companyInfo.email) {
+                doc.text(`Email: ${companyInfo.email}`, 20, 77);
+            }
+            
+            if (companyInfo.registration) {
+                doc.text(`Immatriculation: ${companyInfo.registration}`, 20, 85);
+            }
+            
+            doc.text('À:', 20, 100);
+            doc.setFont(undefined, 'bold');
+            doc.text(currentInvoice.clientName || '[Nom du client]', 20, 108);
+            doc.setFont(undefined, 'normal');
+            
+            if (currentInvoice.clientPhone) {
+                doc.text(`Tél: ${currentInvoice.clientPhone}`, 20, 116);
+            }
+            
+            doc.text(currentInvoice.clientAddress || '[Adresse du client]', 20, 124);
+            
+            if (currentInvoice.clientEmail) {
+                doc.text(`Email: ${currentInvoice.clientEmail}`, 20, 132);
+            }
+            
+            doc.text(`Date: ${formatDate(currentInvoice.date)}`, 160, 100);
+            doc.text(`Échéance: ${formatDate(currentInvoice.dueDate || currentInvoice.date)}`, 160, 108);
+            doc.text(`Méthode de paiement: ${currentInvoice.paymentMethod}`, 160, 116);
+            
+            let yPosition = 150;
+            doc.setFillColor(46, 134, 171);
+            doc.rect(20, yPosition, 170, 10, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.text('Description', 22, yPosition + 7);
+            doc.text('Quantité', 120, yPosition + 7);
+            doc.text('Prix unitaire', 140, yPosition + 7);
+            doc.text('Total', 170, yPosition + 7, { align: 'right' });
+            
+            yPosition += 10;
+            doc.setTextColor(0, 0, 0);
+            
+            let hasItems = false;
+            for (const item of currentInvoice.items) {
+                if (item.description || item.price > 0) {
+                    hasItems = true;
+                    
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                        
+                        doc.setFillColor(46, 134, 171);
+                        doc.rect(20, yPosition, 170, 10, 'F');
+                        doc.setTextColor(255, 255, 255);
+                        doc.text('Description', 22, yPosition + 7);
+                        doc.text('Quantité', 120, yPosition + 7);
+                        doc.text('Prix unitaire', 140, yPosition + 7);
+                        doc.text('Total', 170, yPosition + 7, { align: 'right' });
+                        yPosition += 10;
+                        doc.setTextColor(0, 0, 0);
+                    }
+                    
+                    const descriptionLines = doc.splitTextToSize(item.description || '', 80);
+                    const lineHeight = 7;
+                    
+                    descriptionLines.forEach((line, index) => {
+                        if (yPosition > 250 && index > 0) {
+                            doc.addPage();
+                            yPosition = 20;
+                        }
+                        doc.text(line, 22, yPosition + 7);
+                        if (index === 0) {
+                            doc.text(formatNumber(item.quantity), 120, yPosition + 7);
+                            doc.text(formatCurrency(item.price), 140, yPosition + 7);
+                            doc.text(formatCurrency(item.total), 170, yPosition + 7, { align: 'right' });
+                        }
+                        yPosition += lineHeight;
+                    });
+                    
+                    if (descriptionLines.length > 1) {
+                        yPosition += (descriptionLines.length - 1) * lineHeight;
+                    }
+                }
+            }
+            
+            if (!hasItems) {
+                doc.text('Aucun article ajouté', 22, yPosition + 7);
+                yPosition += 10;
+            }
+            
+            yPosition += 10;
+            
+            doc.text(`Sous-total: ${formatCurrency(currentInvoice.subtotal)}`, 150, yPosition, { align: 'right' });
+            yPosition += 7;
+            
+            if (currentInvoice.taxRate > 0) {
+                doc.text(`TVA (${currentInvoice.taxRate}%): ${formatCurrency(currentInvoice.tax)}`, 150, yPosition, { align: 'right' });
+                yPosition += 7;
+            }
+            
+            if (currentInvoice.discount > 0) {
+                doc.text(`Remise: -${formatCurrency(currentInvoice.discount)}`, 150, yPosition, { align: 'right' });
+                yPosition += 7;
+            }
+            
+            doc.setFontSize(14);
+            doc.setFont(undefined, 'bold');
+            doc.text(`Total: ${formatCurrency(currentInvoice.total)}`, 150, yPosition, { align: 'right' });
+            
+            // Ajouter les informations de paiement si la facture est payée
+            if (currentInvoice.status === STATUS.PAID && currentInvoice.paymentDate) {
+                yPosition += 15;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text('FACTURE PAYÉE', 20, yPosition);
+                yPosition += 7;
+                doc.text(`Date de paiement: ${formatDate(currentInvoice.paymentDate)}`, 20, yPosition);
+                if (currentInvoice.paymentReference) {
+                    yPosition += 7;
+                    doc.text(`Référence: ${currentInvoice.paymentReference}`, 20, yPosition);
+                }
+            }
+            
+            if (currentInvoice.notes) {
+                yPosition += 15;
+                doc.setFontSize(10);
+                doc.setFont(undefined, 'normal');
+                doc.text('Notes:', 20, yPosition);
+                yPosition += 7;
+                const splitNotes = doc.splitTextToSize(currentInvoice.notes, 170);
+                doc.text(splitNotes, 20, yPosition);
+            }
+            
+            const pageHeight = doc.internal.pageSize.height;
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('FacturaPro - Application de facturation pour professionnels africains', 105, pageHeight - 10, { align: 'center' });
         }
         
         // Partager via WhatsApp
         function shareViaWhatsApp() {
+            if (!currentInvoice) {
+                showNotification('Veuillez d\'abord créer une facture', 'error');
+                return;
+            }
+            
             updateInvoiceData();
             
-            // Préparer le message
             let message = `Bonjour,\n\nVoici votre facture ${currentInvoice.number} d'un montant de ${formatCurrency(currentInvoice.total)}.\n\n`;
             message += `Client: ${currentInvoice.clientName}\n`;
             message += `Date: ${formatDate(currentInvoice.date)}\n`;
+            message += `Statut: ${currentInvoice.status}\n`;
             message += `Méthode de paiement: ${currentInvoice.paymentMethod}\n\n`;
             message += `Merci pour votre confiance!`;
             
-            // Encoder le message pour URL
             const encodedMessage = encodeURIComponent(message);
-            
-            // Ouvrir WhatsApp
             window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
             
             showNotification('Ouvrez WhatsApp pour partager la facture', 'success');
@@ -2580,6 +3730,11 @@
         
         // Imprimer la facture
         function printInvoice() {
+            if (!currentInvoice) {
+                showNotification('Veuillez d\'abord créer une facture', 'error');
+                return;
+            }
+            
             const previewContent = document.getElementById('invoice-preview-content').innerHTML;
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -2600,6 +3755,11 @@
                         .total-line { display: flex; justify-content: space-between; margin-bottom: 10px; }
                         .grand-total { font-size: 18px; font-weight: bold; }
                         .pdf-logo { max-width: 80px; max-height: 80px; }
+                        .badge { padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; margin-left: 10px; }
+                        .badge-success { background: #d4edda; color: #155724; }
+                        .badge-warning { background: #fff3cd; color: #856404; }
+                        .badge-danger { background: #f8d7da; color: #721c24; }
+                        .badge-secondary { background: #e2e3e5; color: #383d41; }
                         @media print { 
                             body { margin: 0; }
                             .invoice-header { page-break-after: avoid; }
@@ -2628,48 +3788,177 @@
             const totalRevenue = invoices.reduce((sum, invoice) => sum + invoice.total, 0);
             document.getElementById('total-revenue').textContent = formatCurrency(totalRevenue);
             
-            const paidInvoices = invoices.filter(invoice => invoice.status === 'Payée').length;
+            const paidInvoices = invoices.filter(invoice => invoice.status === STATUS.PAID).length;
             document.getElementById('paid-invoices').textContent = paidInvoices;
         }
         
         // Exporter les données
-        function exportData() {
-            const data = {
-                companyInfo: companyInfo,
-                invoices: invoices,
-                clients: clients,
-                exportDate: new Date().toISOString()
-            };
+        async function exportData() {
+            showLoading('Préparation de l\'export...');
             
-            const dataStr = JSON.stringify(data, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `facturapro-backup-${new Date().toISOString().split('T')[0]}.json`;
-            link.click();
-            
-            showNotification('Données exportées avec succès!', 'success');
-        }
-        
-        // Sauvegarder dans le cloud (fonctionnalité avancée)
-        async function backupToCloud() {
             try {
                 const data = {
                     companyInfo,
                     invoices,
                     clients,
-                    backupDate: new Date().toISOString()
+                    exportDate: new Date().toISOString(),
+                    version: '2.1',
+                    totalRecords: {
+                        invoices: invoices.length,
+                        clients: clients.length,
+                        totalAmount: invoices.reduce((sum, inv) => sum + inv.total, 0)
+                    }
                 };
                 
-                // Simulation de sauvegarde cloud
-                // Dans une implémentation réelle, vous utiliseriez une API
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                const dataStr = JSON.stringify(data, null, 2);
+                const dataBlob = new Blob([dataStr], {type: 'application/json'});
+                const url = URL.createObjectURL(dataBlob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `facturapro-sauvegarde-${new Date().toISOString().split('T')[0]}.json`;
                 
-                showNotification('Sauvegarde cloud simulée avec succès!', 'success');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                
+                showNotification('Sauvegarde exportée avec succès!', 'success');
             } catch (error) {
-                showNotification('Erreur de sauvegarde cloud', 'error');
+                console.error('Erreur lors de l\'export:', error);
+                showNotification('Erreur lors de l\'export des données', 'error');
+            } finally {
+                hideLoading();
             }
+        }
+        
+        // Importer des données
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            showLoading('Import des données...');
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    
+                    // Vérifier la structure des données
+                    if (!importedData.companyInfo || !importedData.invoices || !importedData.clients) {
+                        throw new Error('Format de fichier invalide');
+                    }
+                    
+                    // Demander confirmation
+                    if (confirm(`Voulez-vous importer ces données ?\n\nFactures: ${importedData.invoices.length}\nClients: ${importedData.clients.length}\n\nCela remplacera vos données actuelles.`)) {
+                        // Mettre à jour les données
+                        companyInfo = importedData.companyInfo;
+                        invoices = importedData.invoices;
+                        clients = importedData.clients;
+                        
+                        // Sauvegarder dans le localStorage
+                        saveToStorage('companyInfo', companyInfo);
+                        saveToStorage('invoices', invoices);
+                        saveToStorage('clients', clients);
+                        
+                        // Recharger l'interface
+                        loadCompanyInfo();
+                        loadInvoiceHistory();
+                        loadAllInvoices();
+                        loadClientsList();
+                        updateStats();
+                        updateStatsPage();
+                        updateStatusStats();
+                        
+                        // Créer une nouvelle facture
+                        createNewInvoice();
+                        
+                        showNotification('Données importées avec succès!', 'success');
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de l\'import:', error);
+                    showNotification('Erreur lors de l\'import des données: ' + error.message, 'error');
+                } finally {
+                    hideLoading();
+                    // Réinitialiser le champ file
+                    e.target.value = '';
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('Erreur de lecture du fichier', 'error');
+                hideLoading();
+                e.target.value = '';
+            };
+            
+            reader.readAsText(file);
+        }
+        
+        // Afficher l'aide
+        function showHelp() {
+            const helpMessage = `
+                <div style="padding: 20px;">
+                    <h3 style="color: var(--primary); margin-bottom: 15px;">Guide d'utilisation de FacturaPro</h3>
+                    
+                    <h4>Créer une facture :</h4>
+                    <ol style="margin-left: 20px; margin-bottom: 15px;">
+                        <li>Cliquez sur "Nouvelle Facture"</li>
+                        <li>Remplissez vos informations d'entreprise</li>
+                        <li>Ajoutez les informations du client</li>
+                        <li>Saisissez les articles et services</li>
+                        <li>Configurez les options (statut, TVA, remise)</li>
+                        <li>Enregistrez ou partagez la facture</li>
+                    </ol>
+                    
+                    <h4>Gérer les statuts :</h4>
+                    <ul style="margin-left: 20px; margin-bottom: 15px;">
+                        <li><strong>En attente</strong> : Facture créée mais non payée</li>
+                        <li><strong>Payée</strong> : Facture réglée en totalité</li>
+                        <li><strong>En retard</strong> : Facture non payée après échéance</li>
+                        <li><strong>Annulée</strong> : Facture annulée</li>
+                    </ul>
+                    
+                    <h4>Astuces :</h4>
+                    <ul style="margin-left: 20px;">
+                        <li>Utilisez l'historique pour retrouver rapidement vos factures</li>
+                        <li>Filtrez les factures par statut pour mieux les organiser</li>
+                        <li>Exportez régulièrement vos données pour sauvegarde</li>
+                        <li>Partagez directement les factures via WhatsApp</li>
+                    </ul>
+                    
+                    <div style="margin-top: 20px; padding: 10px; background: #e7f3ff; border-radius: 8px;">
+                        <p><strong>Support :</strong> Pour toute assistance, consultez la documentation.</p>
+                    </div>
+                </div>
+            `;
+            
+            // Créer un modal pour afficher l'aide
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="color: var(--primary);"><i class="fas fa-question-circle"></i> Aide et Support</h2>
+                        <button onclick="this.closest('.modal-overlay').remove()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray);">&times;</button>
+                    </div>
+                    ${helpMessage}
+                    <div style="display: flex; justify-content: flex-end; margin-top: 25px;">
+                        <button onclick="this.closest('.modal-overlay').remove()" class="btn">
+                            <i class="fas fa-times"></i> Fermer
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Fermer en cliquant à l'extérieur
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
         
         // Réinitialiser les données
@@ -2691,40 +3980,16 @@
                     logo: ''
                 };
                 
-                // Réinitialiser l'interface
                 loadCompanyInfo();
                 loadInvoiceHistory();
                 loadAllInvoices();
                 loadClientsList();
                 updateStats();
                 updateStatsPage();
+                updateStatusStats();
                 
-                // Réinitialiser la facture courante
-                currentInvoice = {
-                    id: null,
-                    clientName: '',
-                    clientPhone: '',
-                    clientAddress: '',
-                    clientEmail: '',
-                    date: new Date().toISOString().split('T')[0],
-                    number: 'FAC-' + new Date().getFullYear() + '-' + (invoices.length + 1).toString().padStart(3, '0'),
-                    items: [
-                        { description: '', quantity: 1, price: 0, total: 0 }
-                    ],
-                    notes: '',
-                    taxRate: 0,
-                    discount: 0,
-                    paymentMethod: 'Espèces',
-                    subtotal: 0,
-                    tax: 0,
-                    total: 0,
-                    status: 'En attente'
-                };
-                
-                document.getElementById('invoice-date').value = currentInvoice.date;
-                document.getElementById('invoice-number').value = currentInvoice.number;
-                document.getElementById('duplicate-invoice').style.display = 'none';
-                updateInvoicePreview();
+                // Créer une nouvelle facture
+                createNewInvoice();
                 
                 showNotification('Toutes les données ont été supprimées.', 'success');
             }
@@ -2736,9 +4001,68 @@
             notification.textContent = message;
             notification.className = `notification ${type} show`;
             
+            let icon = '';
+            switch(type) {
+                case 'success':
+                    icon = '<i class="fas fa-check-circle"></i> ';
+                    break;
+                case 'error':
+                    icon = '<i class="fas fa-exclamation-circle"></i> ';
+                    break;
+                case 'warning':
+                    icon = '<i class="fas fa-exclamation-triangle"></i> ';
+                    break;
+            }
+            
+            notification.innerHTML = icon + message;
+            
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
+        }
+        
+        // Fonctions utilitaires pour les statuts
+        function getStatusFromKey(key) {
+            switch(key) {
+                case 'pending': return STATUS.PENDING;
+                case 'paid': return STATUS.PAID;
+                case 'overdue': return STATUS.OVERDUE;
+                case 'cancelled': return STATUS.CANCELLED;
+                default: return STATUS.PENDING;
+            }
+        }
+        
+        function getStatusKey(status) {
+            switch(status) {
+                case STATUS.PENDING: return 'pending';
+                case STATUS.PAID: return 'paid';
+                case STATUS.OVERDUE: return 'overdue';
+                case STATUS.CANCELLED: return 'cancelled';
+                case STATUS.PARTIAL: return 'partial';
+                default: return 'pending';
+            }
+        }
+        
+        function getBadgeClass(status) {
+            switch(status) {
+                case STATUS.PENDING: return 'badge-warning';
+                case STATUS.PAID: return 'badge-success';
+                case STATUS.OVERDUE: return 'badge-danger';
+                case STATUS.CANCELLED: return 'badge-secondary';
+                case STATUS.PARTIAL: return 'badge-info';
+                default: return 'badge-warning';
+            }
+        }
+        
+        function getBadgeIcon(status) {
+            switch(status) {
+                case STATUS.PENDING: return 'fa-clock';
+                case STATUS.PAID: return 'fa-check-circle';
+                case STATUS.OVERDUE: return 'fa-exclamation-triangle';
+                case STATUS.CANCELLED: return 'fa-ban';
+                case STATUS.PARTIAL: return 'fa-money-check-alt';
+                default: return 'fa-clock';
+            }
         }
         
         // Formater la devise
@@ -2765,7 +4089,8 @@
             if (typeof input !== 'string') return input;
             const div = document.createElement('div');
             div.textContent = input;
-            return div.innerHTML;
+            const sanitized = div.innerHTML;
+            return sanitized.length > 1000 ? sanitized.substring(0, 1000) + '...' : sanitized;
         }
     </script>
 </body>
